@@ -1,0 +1,548 @@
+/* =========================================================
+   Sistema de Inventario Web - estilos generales
+   ========================================================= */
+
+:root {
+    --sidebar-width: 250px;
+    --sidebar-bg: #1f2a44;
+    --sidebar-active: #2f6fed;
+    --topbar-height: 62px;
+    --page-bg: #f4f6fb;
+}
+
+body {
+    background-color: var(--page-bg);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* ---------- Estructura general ---------- */
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.app-content {
+    /* El sidebar es position:fixed y sale del flujo, por lo que el contenido
+       debe reservar explícitamente su ancho para no quedar por debajo. */
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-container {
+    padding: 1.5rem;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    color: #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1040;
+    transition: transform .25s ease;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: 1.15rem 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.02rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.sidebar-brand i {
+    font-size: 1.4rem;
+    color: var(--sidebar-active);
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: .75rem .75rem;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sidebar-label {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #7c8bb0;
+    padding: .8rem .75rem .35rem;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .62rem .75rem;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: .5rem;
+    font-size: .93rem;
+    margin-bottom: .15rem;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.sidebar-nav a i {
+    font-size: 1.05rem;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-nav a:hover {
+    background: rgba(255, 255, 255, .07);
+    color: #fff;
+}
+
+.sidebar-nav a.active {
+    background: var(--sidebar-active);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(47, 111, 237, .35);
+}
+
+.sidebar-footer {
+    padding: .85rem;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+.btn-logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .1);
+    color: #f8b4b4;
+    padding: .55rem .75rem;
+    border-radius: .5rem;
+    font-size: .9rem;
+    transition: background-color .15s ease;
+}
+
+.btn-logout:hover {
+    background: rgba(239, 68, 68, .18);
+    color: #fff;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+/* ---------- Topbar ---------- */
+.topbar {
+    height: var(--topbar-height);
+    background: #fff;
+    border-bottom: 1px solid #e5e9f2;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.topbar-title {
+    font-weight: 600;
+    color: #33415c;
+    flex: 1;
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    text-decoration: none;
+    color: #33415c;
+    text-align: right;
+    font-size: .9rem;
+}
+
+.topbar-user::after {
+    display: none;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--sidebar-active);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* ---------- Tarjetas del dashboard ---------- */
+.stat-card {
+    border-radius: .9rem;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .75rem 1.5rem rgba(31, 42, 68, .10) !important;
+}
+
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: .8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stat-label {
+    font-size: .78rem;
+    color: #7c8bb0;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1f2a44;
+    line-height: 1.2;
+}
+
+/* ---------- Tablas y tarjetas ---------- */
+.card {
+    border-radius: .8rem;
+}
+
+.card-header {
+    font-size: .95rem;
+    font-weight: 600;
+    color: #1f2a44;
+    background: #fff;
+    border-bottom: 1px solid #eaeef6;
+}
+
+/* Tablas: celdas parejas, encabezados claros y filas legibles */
+.table {
+    --bs-table-bg: transparent;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/* Las tarjetas con tabla recortan las esquinas redondeadas */
+.card:has(.table-responsive) {
+    overflow: hidden;
+}
+
+.table > :not(caption) > * > * {
+    padding: .72rem .85rem;
+    border-bottom-color: #eaeef6;
+}
+
+.table thead th {
+    background: #f7f9fc;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #64748b;
+    border-bottom: 1px solid #dfe5f0 !important;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    font-size: .9rem;
+    color: #33415c;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-hover > tbody > tr:hover > * {
+    --bs-table-bg-state: #f3f7ff;
+    background-color: #f3f7ff;
+}
+
+/* La fila alterna no debe ganarle al efecto hover */
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-bg: #fbfcfe;
+    background-color: #fbfcfe;
+}
+
+.table-striped > tbody > tr:hover > * {
+    --bs-table-bg: #f3f7ff;
+    background-color: #f3f7ff;
+}
+
+/* Columna de códigos / identificadores */
+.cell-code {
+    font-weight: 600;
+    color: #1f2a44;
+    white-space: nowrap;
+}
+
+/* Texto secundario dentro de una celda */
+.cell-sub {
+    display: block;
+    font-size: .76rem;
+    color: #8494ad;
+    margin-top: .1rem;
+}
+
+/* Celda con contenido largo: recorta sin romper el diseño */
+.cell-truncate {
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Números alineados y sin saltos raros */
+.cell-num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* Columna de acciones */
+.cell-actions {
+    white-space: nowrap;
+}
+
+.cell-actions .btn,
+.page-header .btn {
+    white-space: nowrap;
+}
+
+.cell-actions .btn + .btn,
+.cell-actions .btn + a.btn {
+    margin-left: .3rem;
+}
+
+/* Estados vacíos */
+.empty-state {
+    padding: 2.5rem 1rem !important;
+    color: #8494ad;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: .4rem;
+    opacity: .7;
+}
+
+/* Paginación centrada bajo las tablas */
+.card-footer {
+    background: #fff;
+    border-top: 1px solid #eaeef6;
+}
+
+.card-footer ul.pagination {
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+.card-footer ul.pagination .page-link {
+    border-radius: .45rem;
+    margin: 0 .15rem;
+    font-size: .87rem;
+    color: #2f6fed;
+}
+
+.card-footer ul.pagination .page-item.active .page-link {
+    background-color: #2f6fed;
+    border-color: #2f6fed;
+    color: #fff;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+    border-radius: .5rem;
+    font-size: .9rem;
+    font-weight: 500;
+    padding: .45rem .9rem;
+    white-space: nowrap;
+}
+
+.btn-sm {
+    padding: .28rem .55rem;
+    font-size: .82rem;
+    border-radius: .4rem;
+}
+
+.btn-check:focus + .btn,
+.btn:focus-visible {
+    box-shadow: 0 0 0 .2rem rgba(47, 111, 237, .25);
+}
+
+/* ---------- Formularios y alertas ---------- */
+.form-label {
+    font-weight: 600;
+    font-size: .85rem;
+    color: #33415c;
+    margin-bottom: .35rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: .5rem;
+    border-color: #dbe2ee;
+    font-size: .92rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #2f6fed;
+    box-shadow: 0 0 0 .18rem rgba(47, 111, 237, .18);
+}
+
+.input-group-text {
+    background: #f7f9fc;
+    border-color: #dbe2ee;
+    color: #7c8bb0;
+}
+
+.alert {
+    border-radius: .7rem;
+    font-size: .92rem;
+    border-width: 1px;
+}
+
+/* Barras de desplazamiento discretas */
+.table-responsive::-webkit-scrollbar,
+.sidebar-nav::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb,
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: #c7d0e0;
+    border-radius: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.filter-bar {
+    background: #fff;
+    border-radius: .8rem;
+    padding: .9rem;
+    box-shadow: 0 .125rem .35rem rgba(31, 42, 68, .06);
+}
+
+/* ---------- Login ---------- */
+.login-page {
+    background: linear-gradient(135deg, #1f2a44 0%, #2f6fed 100%);
+    min-height: 100vh;
+}
+
+.login-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, .25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+    .table {
+        min-width: 640px;
+    }
+
+    /* El sidebar pasa a menú deslizante: el contenido vuelve al 100% */
+    .app-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, .5);
+        z-index: 1035;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease;
+    }
+
+    .sidebar.open + .sidebar-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .page-container {
+        padding: 1rem;
+    }
+}
+
+/* ---------- Impresión de reportes ---------- */
+@media print {
+    .sidebar,
+    .topbar,
+    .sidebar-overlay,
+    .no-print {
+        display: none !important;
+    }
+
+    .table {
+        min-width: 0 !important;
+    }
+
+    .app-content {
+        margin: 0;
+        width: 100%;
+    }
+
+    body {
+        background: #fff;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6 !important;
+        overflow: visible !important;
+    }
+}
