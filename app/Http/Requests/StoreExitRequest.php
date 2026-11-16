@@ -18,7 +18,7 @@ class StoreExitRequest extends StoreMovementRequest
             $product = \App\Models\Product::find($this->input('product_id'));
 
             if ($product && (int) $value > $product->stock) {
-                $fail("La cantidad solicitada ({$value}) supera el stock disponible ({$product->stock}) del producto {$product->name}.");
+                $fail(__('app.messages.exit_request_exceeds_stock', ['quantity' => $value, 'stock' => $product->stock, 'name' => $product->name]));
             }
         };
 

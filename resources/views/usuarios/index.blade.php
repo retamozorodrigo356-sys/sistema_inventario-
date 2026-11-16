@@ -1,16 +1,12 @@
-@extends('layouts.app')
-
-@section('title', 'Usuarios')
-
-@section('content')
+<x-layouts.app :title="__('app.users.title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Usuarios</h1>
-        <p class="text-secondary mb-0">Gestión de usuarios y roles del sistema (RF-02).</p>
+        <h1 class="h4 mb-1">{{ __('app.users.heading') }}</h1>
+        <p class="text-secondary mb-0">{{ __('app.users.subtitle') }}</p>
     </div>
     @can('users.create')
         <a href="{{ route('usuarios.create') }}" class="btn btn-primary">
-            <i class="bi bi-person-plus me-1"></i>Registrar usuario
+            <i class="bi bi-person-plus me-1"></i>{{ __('app.users.register') }}
         </a>
     @endcan
 </div>
@@ -21,11 +17,11 @@
             <thead class="table-light">
                 <tr>
                     <th class="text-center">#</th>
-                    <th>Nombre</th>
-                    <th>Usuario</th>
-                    <th>Correo</th>
-                    <th class="text-center">Rol</th>
-                    <th class="text-center">Acciones</th>
+                    <th>{{ __('app.common.name') }}</th>
+                    <th>{{ __('app.common.username') }}</th>
+                    <th>{{ __('app.common.email') }}</th>
+                    <th class="text-center">{{ __('app.common.role') }}</th>
+                    <th class="text-center">{{ __('app.common.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,23 +37,24 @@
                         @elseif ($user->role?->slug === 'encargado')
                             <span class="badge text-bg-success">{{ $user->role?->name }}</span>
                         @else
-                            <span class="badge text-bg-secondary">{{ $user->role?->name ?? 'Sin rol' }}</span>
+                            <span class="badge text-bg-secondary">{{ $user->role?->name ?? __('app.common.no_role') }}</span>
                         @endif
                     </td>
                     <td class="text-center cell-actions">
+                        <a href="{{ route('usuarios.show', $user) }}" class="btn btn-sm btn-outline-secondary" title="{{ __('app.common.view_profile') }}">
+                            <i class="bi bi-eye"></i>
+                        </a>
                         @can('users.update')
-                            <a href="{{ route('usuarios.edit', $user) }}" class="btn btn-sm btn-outline-primary" title="Editar">
+                            <a href="{{ route('usuarios.edit', $user) }}" class="btn btn-sm btn-outline-primary" title="{{ __('app.common.edit') }}">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         @endcan
                         @can('users.delete')
-                            @if ($user->id !== auth()->id())
-                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar"
-                                        data-delete-url="{{ route('usuarios.destroy', $user) }}"
-                                        data-delete-name="{{ $user->name }}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            @endif
+                            <button type="button" class="btn btn-sm btn-outline-danger" title="{{ __('app.common.delete') }}"
+                                    data-delete-url="{{ route('usuarios.destroy', $user) }}"
+                                    data-delete-name="{{ $user->name }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         @endcan
                     </td>
                 </tr>
@@ -65,7 +62,7 @@
                 <tr>
                     <td colspan="6" class="empty-state">
                         <i class="bi bi-people"></i>
-                        No hay usuarios registrados.
+                        {{ __('app.users.empty') }}
                     </td>
                 </tr>
             @endforelse
@@ -79,4 +76,4 @@
         </div>
     @endif
 </div>
-@endsection
+</x-layouts.app>

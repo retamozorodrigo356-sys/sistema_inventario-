@@ -24,10 +24,10 @@ class StoreMovementRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'product_id' => 'producto',
-            'quantity' => 'cantidad',
-            'date' => 'fecha',
-            'observation' => 'observación',
+            'product_id' => __('validation.attributes.product_id'),
+            'quantity' => __('validation.attributes.quantity'),
+            'date' => __('validation.attributes.date'),
+            'observation' => __('validation.attributes.observation'),
         ];
     }
 }

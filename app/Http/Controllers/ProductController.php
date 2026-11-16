@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\InventoryChanged;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
@@ -49,9 +50,11 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        Product::create($request->validated());
+        $product = Product::create($request->validated());
 
-        return redirect()->route('products.index')->with('success', 'Producto registrado correctamente.');
+        InventoryChanged::notify('producto', __('app.messages.broadcast_product_created', ['product' => $product->name]));
+
+        return redirect()->route('products.index')->with('success', __('app.messages.product_created'));
     }
 
     public function edit(Product $product): View
@@ -69,7 +72,9 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
 
-        return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');
+        InventoryChanged::notify('producto', __('app.messages.broadcast_product_updated', ['product' => $product->name]));
+
+        return redirect()->route('products.index')->with('success', __('app.messages.product_updated'));
     }
 
     /**
@@ -80,11 +85,13 @@ class ProductController extends Controller
         try {
             $product->delete();
 
-            return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
+            InventoryChanged::notify('producto', __('app.messages.broadcast_product_deleted', ['product' => $product->name]));
+
+            return redirect()->route('products.index')->with('success', __('app.messages.product_deleted'));
         } catch (QueryException) {
             return redirect()
                 ->route('products.index')
-                ->with('error', 'No se puede eliminar el producto porque tiene movimientos registrados.');
+                ->with('error', __('app.messages.product_has_movements'));
         }
     }
 }

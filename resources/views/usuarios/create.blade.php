@@ -1,12 +1,8 @@
-@extends('layouts.app')
-
-@section('title', 'Registrar usuario')
-
-@section('content')
+<x-layouts.app :title="__('app.users.create_title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Registrar usuario</h1>
-        <p class="text-secondary mb-0">Cree un usuario y asigne su rol (RF-02).</p>
+        <h1 class="h4 mb-1">{{ __('app.users.create_heading') }}</h1>
+        <p class="text-secondary mb-0">{{ __('app.users.create_subtitle') }}</p>
     </div>
 </div>
 
@@ -17,4 +13,4 @@
         </form>
     </div>
 </div>
-@endsection
+</x-layouts.app>

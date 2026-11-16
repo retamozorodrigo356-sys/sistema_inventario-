@@ -33,11 +33,11 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100', 'unique:categorias,name'],
             'description' => ['nullable', 'string', 'max:255'],
-        ], [], ['name' => 'nombre']);
+        ]);
 
         Category::create($data);
 
-        return redirect()->route('categories.index')->with('success', 'Categoría registrada correctamente.');
+        return redirect()->route('categories.index')->with('success', __('app.messages.category_created'));
     }
 
     public function edit(Category $category): View
@@ -53,11 +53,11 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100', 'unique:categorias,name,'.$category->id],
             'description' => ['nullable', 'string', 'max:255'],
-        ], [], ['name' => 'nombre']);
+        ]);
 
         $category->update($data);
 
-        return redirect()->route('categories.index')->with('success', 'Categoría actualizada correctamente.');
+        return redirect()->route('categories.index')->with('success', __('app.messages.category_updated'));
     }
 
     /**
@@ -68,11 +68,11 @@ class CategoryController extends Controller
         try {
             $category->delete();
 
-            return redirect()->route('categories.index')->with('success', 'Categoría eliminada correctamente.');
+            return redirect()->route('categories.index')->with('success', __('app.messages.category_deleted'));
         } catch (QueryException) {
             return redirect()
                 ->route('categories.index')
-                ->with('error', 'No se puede eliminar la categoría porque tiene productos asociados.');
+                ->with('error', __('app.messages.category_has_products'));
         }
     }
 }

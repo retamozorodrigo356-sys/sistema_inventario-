@@ -17,13 +17,17 @@ class CheckPermission
         $user = $request->user();
 
         if (! $user) {
-            return redirect()->route('login');
+            return $request->expectsJson()
+                ? response()->json(['message' => __('app.messages.unauthenticated')], 401)
+                : redirect()->route('login');
         }
 
         if (! $user->hasPermission($ability)) {
-            return redirect()
-                ->route('dashboard')
-                ->with('error', 'No tiene permisos para realizar esta acción.');
+            return $request->expectsJson()
+                ? response()->json(['message' => __('app.messages.no_permission')], 403)
+                : redirect()
+                    ->route('dashboard')
+                    ->with('error', __('app.messages.no_permission'));
         }
 
         return $next($request);

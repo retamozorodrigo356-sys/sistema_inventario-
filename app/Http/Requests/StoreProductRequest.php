@@ -29,11 +29,11 @@ class StoreProductRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'code' => 'código',
-            'category_id' => 'categoría',
-            'price' => 'precio',
-            'stock' => 'stock actual',
-            'stock_min' => 'stock mínimo',
+            'code' => __('validation.attributes.code'),
+            'category_id' => __('validation.attributes.category_id'),
+            'price' => __('validation.attributes.price'),
+            'stock' => __('validation.attributes.stock'),
+            'stock_min' => __('validation.attributes.stock_min'),
         ];
     }
 }

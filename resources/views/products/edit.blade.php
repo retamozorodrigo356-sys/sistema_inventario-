@@ -1,12 +1,8 @@
-@extends('layouts.app')
-
-@section('title', 'Editar producto')
-
-@section('content')
+<x-layouts.app :title="__('app.products.edit_title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Editar producto</h1>
-        <p class="text-secondary mb-0">Modifique los datos de <strong>{{ $product->name }}</strong> (RF-03).</p>
+        <h1 class="h4 mb-1">{{ __('app.products.edit_heading') }}</h1>
+        <p class="text-secondary mb-0">{!! __('app.products.edit_subtitle', ['name' => e($product->name)]) !!}</p>
     </div>
 </div>
 
@@ -18,4 +14,4 @@
         </form>
     </div>
 </div>
-@endsection
+</x-layouts.app>

@@ -1,12 +1,8 @@
-@extends('layouts.app')
-
-@section('title', 'Registrar categoría')
-
-@section('content')
+<x-layouts.app :title="__('app.categories.create_title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Registrar categoría</h1>
-        <p class="text-secondary mb-0">Agregue una nueva categoría al sistema (RF-04).</p>
+        <h1 class="h4 mb-1">{{ __('app.categories.create_heading') }}</h1>
+        <p class="text-secondary mb-0">{{ __('app.categories.create_subtitle') }}</p>
     </div>
 </div>
 
@@ -17,4 +13,4 @@
         </form>
     </div>
 </div>
-@endsection
+</x-layouts.app>

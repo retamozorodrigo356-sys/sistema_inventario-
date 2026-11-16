@@ -518,6 +518,45 @@ body {
     }
 }
 
+/* ---------- Indicador de tiempo real (WebSockets) ---------- */
+.live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 999px;
+    background: #fff;
+}
+
+.live-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #adb5bd;
+}
+
+.live-indicator[data-state='online'] .live-dot {
+    background: #198754;
+    animation: live-pulse 2s infinite;
+}
+
+.live-indicator[data-state='offline'] .live-dot {
+    background: #dc3545;
+}
+
+@keyframes live-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.45);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(25, 135, 84, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(25, 135, 84, 0);
+    }
+}
+
 /* ---------- Impresión de reportes ---------- */
 @media print {
     .sidebar,

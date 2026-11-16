@@ -1,12 +1,8 @@
-@extends('layouts.app')
-
-@section('title', 'Editar categoría')
-
-@section('content')
+<x-layouts.app :title="__('app.categories.edit_title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Editar categoría</h1>
-        <p class="text-secondary mb-0">Modifique los datos de <strong>{{ $category->name }}</strong> (RF-04).</p>
+        <h1 class="h4 mb-1">{{ __('app.categories.edit_heading') }}</h1>
+        <p class="text-secondary mb-0">{!! __('app.categories.edit_subtitle', ['name' => e($category->name)]) !!}</p>
     </div>
 </div>
 
@@ -18,4 +14,4 @@
         </form>
     </div>
 </div>
-@endsection
+</x-layouts.app>

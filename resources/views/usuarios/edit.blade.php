@@ -1,12 +1,8 @@
-@extends('layouts.app')
-
-@section('title', 'Editar usuario')
-
-@section('content')
+<x-layouts.app :title="auth()->id() === $user->id ? __('app.users.edit_self_title') : __('app.users.edit_title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Editar usuario</h1>
-        <p class="text-secondary mb-0">Modifique los datos de <strong>{{ $user->name }}</strong> (RF-02).</p>
+        <h1 class="h4 mb-1">{{ auth()->id() === $user->id ? __('app.users.edit_self_heading') : __('app.users.edit_heading') }}</h1>
+        <p class="text-secondary mb-0">{!! __('app.users.edit_subtitle', ['name' => e($user->name)]) !!}</p>
     </div>
 </div>
 
@@ -18,4 +14,4 @@
         </form>
     </div>
 </div>
-@endsection
+</x-layouts.app>

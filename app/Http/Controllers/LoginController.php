@@ -26,8 +26,6 @@ class LoginController extends Controller
         $credentials = $request->validate([
             'login' => ['required', 'string'],
             'password' => ['required', 'string'],
-        ], [], [
-            'login' => 'usuario o correo',
         ]);
 
         $field = str_contains($credentials['login'], '@') ? 'email' : 'username';
@@ -36,14 +34,14 @@ class LoginController extends Controller
 
         if (! Auth::attempt([$field => $credentials['login'], 'password' => $credentials['password']], $remember)) {
             throw ValidationException::withMessages([
-                'login' => 'Las credenciales proporcionadas no son correctas.',
+                'login' => __('app.messages.credentials_invalid'),
             ]);
         }
 
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard'))
-            ->with('success', 'Bienvenido(a), '.Auth::user()->name.'.');
+            ->with('success', __('app.messages.login_welcome', ['name' => Auth::user()->name]));
     }
 
     /**
@@ -56,6 +54,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'Sesión cerrada correctamente.');
+        return redirect()->route('login')->with('success', __('app.messages.logout_success'));
     }
 }

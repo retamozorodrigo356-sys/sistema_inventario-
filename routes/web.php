@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntradaController;
@@ -23,16 +27,69 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('dashboard'));
 
+// Selector de idioma (español, inglés y francés). Disponible también sin sesión.
+Route::get('/idioma/{locale}', function (string $locale) {
+    abort_unless(array_key_exists($locale, config('app.available_locales')), 404);
+
+    session(['locale' => $locale]);
+
+    return back();
+})->name('locale.switch');
+
 // Invitados (sin sesión)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+
+    // Recuperación de contraseña: envía por correo un enlace para restablecerla.
+    Route::get('/contrasena/olvide', [ForgotPasswordController::class, 'create'])
+        ->name('password.forgot');
+    Route::post('/contrasena/olvide', [ForgotPasswordController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('password.forgot.store');
+
+    // Verificación de correo: formulario público para pedir el enlace.
+    Route::get('/correo/verificar/solicitud', [EmailVerificationController::class, 'create'])
+        ->name('verification.request');
+    Route::post('/correo/verificar/solicitud', [EmailVerificationController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('verification.request.store');
+
+    // Registro público de nuevos usuarios (rol por defecto: consultor).
+    Route::get('/registro', [RegisterController::class, 'create'])
+        ->name('register');
+    Route::post('/registro', [RegisterController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('register.store');
 });
 
-// Usuarios autenticados
+// El enlace del correo abre este formulario; es público a propósito para
+// que funcione aunque haya una sesión abierta (el token es de un solo uso).
+Route::get('/contrasena/restablecer/{token}', [ResetPasswordController::class, 'create'])
+    ->name('password.reset');
+Route::post('/contrasena/restablecer/{token}', [ResetPasswordController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('password.reset.store');
+
+// Usuarios autenticados: el logout y la verificación de correo son las
+// únicas vistas disponibles con el correo todavía sin verificar.
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
+    // Verificación de correo (RF/RNF).
+    Route::get('/correo/verificar/aviso', [EmailVerificationController::class, 'notice'])
+        ->name('verification.notice');
+    Route::get('/correo/verificar/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+        ->middleware('signed')
+        ->name('verification.verify');
+    Route::post('/correo/verificar/reenviar', [EmailVerificationController::class, 'resend'])
+        ->middleware('throttle:5,1')
+        ->name('verification.resend');
+});
+
+// Sin el correo verificado no hay acceso a ninguna vista del sistema:
+// el middleware "verified" redirige a verification.notice.
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)
         ->middleware('permission:dashboard.view')
         ->name('dashboard');
@@ -87,6 +144,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/entradas', [EntradaController::class, 'store'])
         ->middleware('permission:entries.create')
         ->name('entradas.store');
+    Route::get('/entradas/{movement}/editar', [EntradaController::class, 'edit'])
+        ->middleware('permission:entries.update')
+        ->name('entradas.edit');
+    Route::put('/entradas/{movement}', [EntradaController::class, 'update'])
+        ->middleware('permission:entries.update')
+        ->name('entradas.update');
+    Route::delete('/entradas/{movement}', [EntradaController::class, 'destroy'])
+        ->middleware('permission:entries.delete')
+        ->name('entradas.destroy');
 
     // Salidas (RF-06, RF-08)
     Route::middleware('permission:exits.view')->group(function () {
@@ -98,6 +164,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/salidas', [SalidaController::class, 'store'])
         ->middleware('permission:exits.create')
         ->name('salidas.store');
+    Route::get('/salidas/{movement}/editar', [SalidaController::class, 'edit'])
+        ->middleware('permission:exits.update')
+        ->name('salidas.edit');
+    Route::put('/salidas/{movement}', [SalidaController::class, 'update'])
+        ->middleware('permission:exits.update')
+        ->name('salidas.update');
+    Route::delete('/salidas/{movement}', [SalidaController::class, 'destroy'])
+        ->middleware('permission:exits.delete')
+        ->name('salidas.destroy');
 
     // Movimientos (RF-10)
     Route::get('/movimientos', [MovementController::class, 'index'])
@@ -114,14 +189,23 @@ Route::middleware('auth')->group(function () {
     Route::post('/usuarios', [UserController::class, 'store'])
         ->middleware('permission:users.create')
         ->name('usuarios.store');
+    // El perfil se declara después de /usuarios/crear para no capturar esa ruta.
+    // Cualquier usuario, sea cual sea su rol, puede ver y editar su propio perfil;
+    // el acceso a perfiles de otros usuarios se valida en el controlador (users.*)
+    // sin middleware de permiso para poder distinguir "propio" de "ajeno".
+    Route::get('/usuarios/{user}', [UserController::class, 'show'])
+        ->name('usuarios.show');
     Route::get('/usuarios/{user}/editar', [UserController::class, 'edit'])
-        ->middleware('permission:users.update')
         ->name('usuarios.edit');
+    Route::get('/usuarios/{user}/contrasena', [UserController::class, 'editPassword'])
+        ->name('usuarios.password');
+    Route::put('/usuarios/{user}/contrasena', [UserController::class, 'updatePassword'])
+        ->name('usuarios.password.update');
     Route::put('/usuarios/{user}', [UserController::class, 'update'])
-        ->middleware('permission:users.update')
         ->name('usuarios.update');
+    // Igual que el perfil: cada usuario puede eliminarse a sí mismo;
+    // eliminar a otros exige users.delete y se valida en el controlador.
     Route::delete('/usuarios/{user}', [UserController::class, 'destroy'])
-        ->middleware('permission:users.delete')
         ->name('usuarios.destroy');
 
     // Reportes

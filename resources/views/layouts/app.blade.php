@@ -1,10 +1,14 @@
+@props(['title' => null])
+@php
+    $resolvedTitle = $title ?? (trim($__env->yieldContent('title')) ?: __('app.nav.dashboard'));
+@endphp
 <!doctype html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') · Sistema de Inventario</title>
+    <title>{{ $resolvedTitle }} · {{ __('app.brand') }}</title>
 
     <!-- Bootstrap 5 + iconos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,16 +23,16 @@
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <i class="bi bi-box-seam-fill"></i>
-            <span>Sistema de Inventario</span>
+            <span>{{ __('app.brand') }}</span>
         </div>
 
         <ul class="sidebar-nav">
-            <li class="sidebar-label">Menú principal</li>
+            <li class="sidebar-label">{{ __('app.nav.main_menu') }}</li>
 
             @can('dashboard.view')
                 <li>
                     <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+                        <i class="bi bi-speedometer2"></i><span>{{ __('app.nav.dashboard') }}</span>
                     </a>
                 </li>
             @endcan
@@ -36,7 +40,7 @@
             @can('products.view')
                 <li>
                     <a href="{{ route('products.index') }}" class="{{ request()->routeIs('products.*') ? 'active' : '' }}">
-                        <i class="bi bi-box-seam"></i><span>Productos</span>
+                        <i class="bi bi-box-seam"></i><span>{{ __('app.nav.products') }}</span>
                     </a>
                 </li>
             @endcan
@@ -44,7 +48,7 @@
             @can('categories.view')
                 <li>
                     <a href="{{ route('categories.index') }}" class="{{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                        <i class="bi bi-tags"></i><span>Categorías</span>
+                        <i class="bi bi-tags"></i><span>{{ __('app.nav.categories') }}</span>
                     </a>
                 </li>
             @endcan
@@ -52,7 +56,7 @@
             @can('entries.view')
                 <li>
                     <a href="{{ route('entradas.index') }}" class="{{ request()->routeIs('entradas.*') ? 'active' : '' }}">
-                        <i class="bi bi-box-arrow-in-down"></i><span>Entradas</span>
+                        <i class="bi bi-box-arrow-in-down"></i><span>{{ __('app.nav.entries') }}</span>
                     </a>
                 </li>
             @endcan
@@ -60,7 +64,7 @@
             @can('exits.view')
                 <li>
                     <a href="{{ route('salidas.index') }}" class="{{ request()->routeIs('salidas.*') ? 'active' : '' }}">
-                        <i class="bi bi-box-arrow-up"></i><span>Salidas</span>
+                        <i class="bi bi-box-arrow-up"></i><span>{{ __('app.nav.exits') }}</span>
                     </a>
                 </li>
             @endcan
@@ -68,7 +72,7 @@
             @can('movements.view')
                 <li>
                     <a href="{{ route('movimientos.index') }}" class="{{ request()->routeIs('movimientos.*') ? 'active' : '' }}">
-                        <i class="bi bi-arrow-left-right"></i><span>Movimientos</span>
+                        <i class="bi bi-arrow-left-right"></i><span>{{ __('app.nav.movements') }}</span>
                     </a>
                 </li>
             @endcan
@@ -76,16 +80,16 @@
             @can('reports.view')
                 <li>
                     <a href="{{ route('reportes.index') }}" class="{{ request()->routeIs('reportes.*') ? 'active' : '' }}">
-                        <i class="bi bi-file-earmark-text"></i><span>Reportes</span>
+                        <i class="bi bi-file-earmark-text"></i><span>{{ __('app.nav.reports') }}</span>
                     </a>
                 </li>
             @endcan
 
             @can('users.view')
-                <li class="sidebar-label mt-3">Administración</li>
+                <li class="sidebar-label mt-3">{{ __('app.nav.administration') }}</li>
                 <li>
                     <a href="{{ route('usuarios.index') }}" class="{{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
-                        <i class="bi bi-people"></i><span>Usuarios</span>
+                        <i class="bi bi-people"></i><span>{{ __('app.nav.users') }}</span>
                     </a>
                 </li>
             @endcan
@@ -95,7 +99,7 @@
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="btn-logout">
-                    <i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span>
+                    <i class="bi bi-box-arrow-left"></i><span>{{ __('app.nav.logout') }}</span>
                 </button>
             </form>
         </div>
@@ -107,28 +111,50 @@
     <div class="app-content">
 
         <header class="topbar">
-            <button class="btn btn-light btn-sm d-lg-none" id="sidebarToggle" type="button" aria-label="Menú">
+            <button class="btn btn-light btn-sm d-lg-none" id="sidebarToggle" type="button" aria-label="{{ __('app.nav.main_menu') }}">
                 <i class="bi bi-list fs-5"></i>
             </button>
 
-            <div class="topbar-title d-none d-lg-block">@yield('title', 'Dashboard')</div>
+            <div class="topbar-title d-none d-lg-block">{{ $resolvedTitle }}</div>
+
+            {{-- Selector de idioma --}}
+            <div class="dropdown ms-auto">
+                <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-globe2 me-1"></i>{{ strtoupper(app()->getLocale()) }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    @foreach (config('app.available_locales') as $code => $label)
+                        <li>
+                            <a class="dropdown-item {{ app()->getLocale() === $code ? 'active' : '' }}"
+                               href="{{ route('locale.switch', $code) }}">{{ $label }}</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
 
             <div class="dropdown">
                 <a class="dropdown-toggle topbar-user" data-bs-toggle="dropdown" href="#" role="button">
                     <span class="avatar"><i class="bi bi-person-fill"></i></span>
                     <span class="d-none d-md-inline">
                         <strong>{{ auth()->user()->name }}</strong>
-                        <small class="d-block text-secondary">{{ auth()->user()->role?->name ?? 'Sin rol' }}</small>
+                        <small class="d-block text-secondary">
+                            {{ auth()->user()->role ? __('app.roles.'.auth()->user()->role->slug) : __('app.common.no_role') }}
+                        </small>
                     </span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
-                    <li><span class="dropdown-item-text small text-secondary">Sesión iniciada como<br><strong>{{ auth()->user()->email }}</strong></span></li>
+                    <li><span class="dropdown-item-text small text-secondary">{{ __('app.nav.logged_in_as') }}<br><strong>{{ auth()->user()->email }}</strong></span></li>
                     <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('usuarios.show', auth()->user()) }}">
+                            <i class="bi bi-person me-2"></i>{{ __('app.nav.my_profile') }}
+                        </a>
+                    </li>
                     <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="dropdown-item text-danger">
-                                <i class="bi bi-box-arrow-left me-2"></i>Cerrar sesión
+                                <i class="bi bi-box-arrow-left me-2"></i>{{ __('app.nav.logout') }}
                             </button>
                         </form>
                     </li>
@@ -137,7 +163,9 @@
         </header>
 
         <main class="page-container">
+            @include('partials.verify-banner')
             @include('partials.alerts')
+            {{ $slot ?? '' }}
             @yield('content')
         </main>
     </div>
@@ -148,19 +176,19 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar eliminación</h5>
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ __('app.common.delete') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                ¿Está seguro de eliminar <strong id="deleteItemName">este registro</strong>?
-                <p class="text-secondary small mb-0 mt-2">Esta acción no se puede deshacer.</p>
+                {{ __('app.common.delete_confirm') }} <strong id="deleteItemName">{{ __('app.common.delete_default') }}</strong>?
+                <p class="text-secondary small mb-0 mt-2">{{ __('app.common.delete_warning') }}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.common.cancel') }}</button>
                 <form id="deleteForm" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" class="btn btn-danger">{{ __('app.common.delete') }}</button>
                 </form>
             </div>
         </div>
@@ -181,10 +209,11 @@
         if (!trigger) return;
 
         document.getElementById('deleteForm').action = trigger.dataset.deleteUrl;
-        document.getElementById('deleteItemName').textContent = trigger.dataset.deleteName || 'este registro';
+        document.getElementById('deleteItemName').textContent = trigger.dataset.deleteName || @json(__('app.common.delete_default'));
         new bootstrap.Modal(document.getElementById('deleteModal')).show();
     });
 </script>
 @stack('scripts')
+{{ $scripts ?? '' }}
 </body>
 </html>

@@ -155,11 +155,11 @@ class StockMovementTest extends TestCase
             ->get(route('entradas.create'))
             ->assertOk()
             ->assertSee('Producto Visible')
-            ->assertSee('stock: 8');
+            ->assertSee('Stock: 8');
 
         $this->actingAs($this->userWithRole('encargado'))
             ->get(route('salidas.create'))
             ->assertOk()
-            ->assertSee('disponible: 8');
+            ->assertSee('Disponible: 8');
     }
 }

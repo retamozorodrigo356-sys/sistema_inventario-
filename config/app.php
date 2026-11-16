@@ -78,11 +78,26 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'es'),
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'es'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Idiomas disponibles
+    |--------------------------------------------------------------------------
+    |
+    | Idioma => nombre que se muestra en el selector de idioma.
+    |
+    */
+
+    'available_locales' => [
+        'es' => 'Español',
+        'en' => 'English',
+        'fr' => 'Français',
+    ],
 
     /*
     |--------------------------------------------------------------------------

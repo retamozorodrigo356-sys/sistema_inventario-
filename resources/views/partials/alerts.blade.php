@@ -14,7 +14,7 @@
 
 @if ($errors->any())
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Revise los siguientes datos:</strong>
+        <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ __('app.common.review_data') }}</strong>
         <ul class="mb-0 mt-2">
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>

@@ -1,16 +1,12 @@
-@extends('layouts.app')
-
-@section('title', 'Salidas')
-
-@section('content')
+<x-layouts.app :title="__('app.exits.title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Salidas de productos</h1>
-        <p class="text-secondary mb-0">Historial de egresos del inventario (RF-06).</p>
+        <h1 class="h4 mb-1">{{ __('app.exits.heading') }}</h1>
+        <p class="text-secondary mb-0">{{ __('app.exits.subtitle') }}</p>
     </div>
     @can('exits.create')
         <a href="{{ route('salidas.create') }}" class="btn btn-warning">
-            <i class="bi bi-plus-lg me-1"></i>Registrar salida
+            <i class="bi bi-plus-lg me-1"></i>{{ __('app.exits.register') }}
         </a>
     @endcan
 </div>
@@ -21,11 +17,12 @@
             <thead class="table-light">
                 <tr>
                     <th class="text-center">#</th>
-                    <th>Producto</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-center">Fecha</th>
-                    <th>Observación</th>
-                    <th>Usuario</th>
+                    <th>{{ __('app.common.product') }}</th>
+                    <th class="text-center">{{ __('app.common.quantity') }}</th>
+                    <th class="text-center">{{ __('app.common.date') }}</th>
+                    <th>{{ __('app.common.observation') }}</th>
+                    <th>{{ __('app.common.username') }}</th>
+                    <th class="text-center">{{ __('app.common.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -42,12 +39,31 @@
                     <td class="text-center cell-num">{{ $movement->date->format('d/m/Y') }}</td>
                     <td>{{ $movement->observation ?? '—' }}</td>
                     <td>{{ $movement->user?->name ?? '—' }}</td>
+                    <td class="text-center cell-actions">
+                        @can('exits.update')
+                            <a href="{{ route('salidas.edit', $movement) }}" class="btn btn-sm btn-outline-primary" title="{{ __('app.common.edit') }}">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        @endcan
+                        @can('exits.delete')
+                            <button type="button" class="btn btn-sm btn-outline-danger" title="{{ __('app.common.delete') }}"
+                                    data-delete-url="{{ route('salidas.destroy', $movement) }}"
+                                    data-delete-name="{{ __('app.exits.delete_name', ['id' => $movement->id, 'product' => $movement->product?->name ?? __('app.common.product')]) }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        @endcan
+                        @cannot('exits.update')
+                            @cannot('exits.delete')
+                                <span class="text-secondary small">{{ __('app.common.read_only') }}</span>
+                            @endcannot
+                        @endcannot
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="empty-state">
+                    <td colspan="7" class="empty-state">
                         <i class="bi bi-box-arrow-up"></i>
-                        No hay salidas registradas.
+                        {{ __('app.exits.empty') }}
                     </td>
                 </tr>
             @endforelse
@@ -61,4 +77,4 @@
         </div>
     @endif
 </div>
-@endsection
+</x-layouts.app>

@@ -4,7 +4,7 @@ Proyecto académico de la Unidad Didáctica **Innovación Tecnología**.
 Sistema web para administrar un inventario de productos, controlar entradas y salidas,
 consultar el stock y gestionar usuarios mediante roles y permisos.
 
-**Stack:** Laravel 12 · PHP 8.2 · MySQL · Blade · HTML · CSS · JavaScript · Bootstrap 5
+**Stack:** Laravel 12 · PHP 8.2 · MySQL · Blade · HTML · CSS · JavaScript · Bootstrap 5 · Laravel Reverb (WebSockets)
 
 ---
 
@@ -62,6 +62,30 @@ php artisan serve
 ```
 
 Abra <http://127.0.0.1:8000> e inicie sesión.
+
+### Tiempo real con WebSockets (Laravel Reverb)
+
+El dashboard se actualiza solo cuando otro usuario registra una entrada, una salida
+o modifica un producto. Para ello debe estar activo el servidor de WebSockets
+(el cliente usa Laravel Echo y pusher-js desde CDN, no hace falta compilar):
+
+```bash
+php artisan reverb:start   # servidor de WebSockets (dejar en una terminal aparte)
+```
+
+También puede levantar todo junto con:
+
+```bash
+composer run dev           # serve + queue + logs + vite + reverb
+```
+
+La conexión se configura con las variables `REVERB_*` del `.env` (el servidor
+escucha en `localhost:8080` por defecto) y el dashboard muestra **En vivo**
+cuando el WebSocket está conectado. Si Reverb no está activo, el sistema sigue
+funcionando con normalidad; solo se pierde la actualización automática del panel.
+
+> Si su `.env` no tiene `REVERB_APP_ID`, `REVERB_APP_KEY` ni `REVERB_APP_SECRET`,
+ejecute `php artisan reverb:install` una vez para generarlos.
 
 ## 5. Usuarios de prueba
 

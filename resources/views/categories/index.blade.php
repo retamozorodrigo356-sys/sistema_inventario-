@@ -1,16 +1,12 @@
-@extends('layouts.app')
-
-@section('title', 'Categorías')
-
-@section('content')
+<x-layouts.app :title="__('app.categories.title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Categorías</h1>
-        <p class="text-secondary mb-0">Agrupa los productos por categoría (RF-04).</p>
+        <h1 class="h4 mb-1">{{ __('app.categories.heading') }}</h1>
+        <p class="text-secondary mb-0">{{ __('app.categories.subtitle') }}</p>
     </div>
     @can('categories.create')
         <a href="{{ route('categories.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg me-1"></i>Registrar categoría
+            <i class="bi bi-plus-lg me-1"></i>{{ __('app.categories.register') }}
         </a>
     @endcan
 </div>
@@ -21,10 +17,10 @@
             <thead class="table-light">
                 <tr>
                     <th class="text-center">#</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th class="text-center">Productos</th>
-                    <th class="text-center">Acciones</th>
+                    <th>{{ __('app.common.name') }}</th>
+                    <th>{{ __('app.common.description') }}</th>
+                    <th class="text-center">{{ __('app.categories.products') }}</th>
+                    <th class="text-center">{{ __('app.common.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,12 +34,12 @@
                     </td>
                     <td class="text-center cell-actions">
                         @can('categories.update')
-                            <a href="{{ route('categories.edit', $category) }}" class="btn btn-sm btn-outline-primary" title="Editar">
+                            <a href="{{ route('categories.edit', $category) }}" class="btn btn-sm btn-outline-primary" title="{{ __('app.common.edit') }}">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         @endcan
                         @can('categories.delete')
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar"
+                            <button type="button" class="btn btn-sm btn-outline-danger" title="{{ __('app.common.delete') }}"
                                     data-delete-url="{{ route('categories.destroy', $category) }}"
                                     data-delete-name="{{ $category->name }}">
                                 <i class="bi bi-trash"></i>
@@ -55,7 +51,7 @@
                 <tr>
                     <td colspan="5" class="empty-state">
                         <i class="bi bi-tags"></i>
-                        No hay categorías registradas.
+                        {{ __('app.categories.empty') }}
                     </td>
                 </tr>
             @endforelse
@@ -69,4 +65,4 @@
         </div>
     @endif
 </div>
-@endsection
+</x-layouts.app>

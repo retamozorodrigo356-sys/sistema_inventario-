@@ -1,12 +1,8 @@
-@extends('layouts.app')
-
-@section('title', 'Movimientos')
-
-@section('content')
+<x-layouts.app :title="__('app.movements.title')">
 <div class="page-header">
     <div>
-        <h1 class="h4 mb-1">Historial de movimientos</h1>
-        <p class="text-secondary mb-0">Entradas y salidas con producto, cantidad, fecha y usuario (RF-10).</p>
+        <h1 class="h4 mb-1">{{ __('app.movements.heading') }}</h1>
+        <p class="text-secondary mb-0">{{ __('app.movements.subtitle') }}</p>
     </div>
 </div>
 
@@ -15,13 +11,13 @@
     <div class="row g-2">
         <div class="col-12 col-md-3">
             <select name="type" class="form-select">
-                <option value="">Todos los tipos</option>
-                <option value="entrada" @selected(request('type') === 'entrada')>Entradas</option>
-                <option value="salida" @selected(request('type') === 'salida')>Salidas</option>
+                <option value="">{{ __('app.movements.all_types') }}</option>
+                <option value="entrada" @selected(request('type') === 'entrada')>{{ __('app.entries.title') }}</option>
+                <option value="salida" @selected(request('type') === 'salida')>{{ __('app.exits.title') }}</option>
             </select>
         </div>
         <div class="col-12 col-md-3">
-            <input type="text" name="search" class="form-control" placeholder="Producto o código..."
+            <input type="text" name="search" class="form-control" placeholder="{{ __('app.movements.search_placeholder') }}"
                    value="{{ request('search') }}">
         </div>
         <div class="col-6 col-md-2">
@@ -32,7 +28,7 @@
         </div>
         <div class="col-12 col-md-2 d-flex gap-2">
             <button type="submit" class="btn btn-outline-primary flex-fill">
-                <i class="bi bi-funnel me-1"></i>Filtrar
+                <i class="bi bi-funnel me-1"></i>{{ __('app.common.filter') }}
             </button>
         </div>
     </div>
@@ -44,12 +40,12 @@
             <thead class="table-light">
                 <tr>
                     <th class="text-center">#</th>
-                    <th>Tipo</th>
-                    <th>Producto</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-center">Fecha</th>
-                    <th>Observación</th>
-                    <th>Usuario</th>
+                    <th>{{ __('app.common.type') }}</th>
+                    <th>{{ __('app.common.product') }}</th>
+                    <th class="text-center">{{ __('app.common.quantity') }}</th>
+                    <th class="text-center">{{ __('app.common.date') }}</th>
+                    <th>{{ __('app.common.observation') }}</th>
+                    <th>{{ __('app.common.username') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,9 +54,9 @@
                     <td class="text-center cell-code">{{ $movement->id }}</td>
                     <td>
                         @if ($movement->isEntrada())
-                            <span class="badge text-bg-success"><i class="bi bi-arrow-down-circle me-1"></i>Entrada</span>
+                            <span class="badge text-bg-success"><i class="bi bi-arrow-down-circle me-1"></i>{{ __('app.entries.title_one') }}</span>
                         @else
-                            <span class="badge text-bg-warning text-dark"><i class="bi bi-arrow-up-circle me-1"></i>Salida</span>
+                            <span class="badge text-bg-warning text-dark"><i class="bi bi-arrow-up-circle me-1"></i>{{ __('app.exits.title_one') }}</span>
                         @endif
                     </td>
                     <td class="cell-truncate" title="{{ $movement->product?->name }}">
@@ -76,7 +72,7 @@
                 <tr>
                     <td colspan="7" class="empty-state">
                         <i class="bi bi-arrow-left-right"></i>
-                        No se encontraron movimientos.
+                        {{ __('app.movements.empty') }}
                     </td>
                 </tr>
             @endforelse
@@ -90,4 +86,4 @@
         </div>
     @endif
 </div>
-@endsection
+</x-layouts.app>
