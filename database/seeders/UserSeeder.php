@@ -40,15 +40,13 @@ class UserSeeder extends Seeder
         foreach ($users as $data) {
             $role = Role::where('slug', $data['role'])->first();
 
-            User::firstOrCreate(
-                ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'username' => $data['username'],
-                    'password' => $data['password'], // se guarda con hash (RNF-03)
-                    'role_id' => $role?->id,
-                ]
-            );
+            $user = User::firstOrNew(['email' => $data['email']]);
+            $user->name = $data['name'];
+            $user->username = $data['username'];
+            $user->password = $data['password'];
+            $user->role_id = $role?->id;
+            $user->email_verified_at = now();
+            $user->save();
         }
     }
 }

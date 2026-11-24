@@ -83,37 +83,74 @@
         instance.show();
     }
 
-    if (!window.Echo || !config.key) {
+    const EchoConstructor = typeof window.Echo === 'function'
+        ? window.Echo
+        : (window.Echo?.default || window.Echo);
+
+    if (!EchoConstructor || !config.key) {
         setStatus('Tiempo real no configurado', 'text-secondary');
         return;
     }
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
-    const echo = new window.Echo({
+    // Usar el host actual de la barra de direcciones para evitar discrepancias (localhost vs 127.0.0.1)
+    const wsHost = (window.location.hostname && window.location.hostname !== '')
+        ? window.location.hostname
+        : (config.host || 'localhost');
+
+    const echo = new EchoConstructor({
         broadcaster: 'reverb',
         key: config.key,
-        wsHost: config.host,
-        wsPort: config.port,
-        wssPort: config.port,
-        forceTLS: config.scheme === 'https',
+        wsHost: wsHost,
+        wsPort: config.port ? parseInt(config.port, 10) : 8080,
+        wssPort: config.port ? parseInt(config.port, 10) : 8080,
+        forceTLS: (config.scheme === 'https' || window.location.protocol === 'https:'),
         enabledTransports: ['ws', 'wss'],
+        authEndpoint: '/broadcasting/auth',
         auth: {
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
             },
         },
     });
 
     const connection = echo.connector?.pusher?.connection;
 
-    connection?.bind('connected', () => setStatus('En vivo', 'text-success'));
-    connection?.bind('disconnected', () => setStatus('Sin conexión', 'text-danger'));
-    connection?.bind('unavailable', () => setStatus('Sin conexión', 'text-danger'));
-    connection?.bind('failed', () => setStatus('Sin conexión', 'text-danger'));
+    if (connection) {
+        const updateState = (state) => {
+            if (state === 'connected') {
+                setStatus('En vivo', 'text-success');
+            } else if (state === 'connecting') {
+                setStatus('Conectando...', 'text-secondary');
+            } else if (state === 'unavailable' || state === 'failed') {
+                setStatus('Sin conexión', 'text-danger');
+            } else if (state === 'disconnected') {
+                setStatus('Sin conexión', 'text-secondary');
+            }
+        };
 
-    echo.private('inventory').listen('.inventory.changed', (event) => {
-        showToast(event);
-        scheduleRefresh();
-    });
+        if (connection.state) {
+            updateState(connection.state);
+        }
+
+        connection.bind('state_change', (states) => {
+            updateState(states.current);
+        });
+
+        connection.bind('connected', () => setStatus('En vivo', 'text-success'));
+        connection.bind('disconnected', () => setStatus('Sin conexión', 'text-secondary'));
+        connection.bind('unavailable', () => setStatus('Sin conexión', 'text-danger'));
+        connection.bind('failed', () => setStatus('Sin conexión', 'text-danger'));
+    }
+
+    try {
+        echo.private('inventory').listen('.inventory.changed', (event) => {
+            showToast(event);
+            scheduleRefresh();
+        });
+    } catch (err) {
+        console.warn('Error al suscribirse al canal inventory:', err);
+    }
 })();

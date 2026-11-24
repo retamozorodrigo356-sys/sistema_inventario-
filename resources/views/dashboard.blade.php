@@ -180,6 +180,10 @@
 <script src="https://js.pusher.com/8.6.0/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/laravel-echo@2.6.3/dist/echo.iife.js"></script>
 <script>
+    if (window.Echo && typeof window.Echo === 'object' && window.Echo.default) {
+        window.Echo = window.Echo.default;
+    }
+
     window.liveLabels = {
         online: @json(__('app.live.online')),
         offline: @json(__('app.live.offline')),
@@ -196,6 +200,6 @@
         scheme: @json(config('broadcasting.connections.reverb.options.scheme', 'http')),
     };
 </script>
-<script src="{{ asset('js/inventory-live.js') }}"></script>
+<script src="{{ asset('js/inventory-live.js') }}?v={{ time() }}"></script>
 @endpush
 </x-layouts.app>

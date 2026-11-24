@@ -25,7 +25,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', fn () => redirect()->route('dashboard'));
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
 // Selector de idioma (español, inglés y francés). Disponible también sin sesión.
 Route::get('/idioma/{locale}', function (string $locale) {
